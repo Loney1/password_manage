@@ -1,0 +1,20 @@
+ProjectName: apiserver
+
+Log:
+  LogPath: /home/zawx/logs
+  LogLevel: debug
+  IsStdOut: yes
+  IsPProf: no
+  PathPProf: /home/zawx/logs/pprof
+
+GrpcSrv:
+  Address: 127.0.0.1:5000
+
+MySQL:
+  User: root
+  Passwd: hmfzpl123
+  Host: 127.0.0.1:3306
+  DbName: test_pwdsync
+  Active: 100
+  Idle: 200
+  IdleTimeout: 4h

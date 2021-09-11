@@ -1,0 +1,177 @@
+/* protobuf generated code shouldn't be here. consider add a script or a flag in main */
+
+// generated xx.pb.go:
+// protoc -I . adm.proto --go_out=plugins=grpc:.
+
+syntax = "proto3";
+
+package adm;
+
+option go_package = "./;v1";
+
+//import "infra/validator/validator.proto";
+
+service ADM {
+  //用户登录及管理
+  rpc Login(LoginReq) returns (LoginReply) {} //登录
+  rpc Logout(LogoutReq) returns (LogoutReply) {} //登出
+  rpc ListUser(ListUserReq) returns (ListUserReply) {} //获取用户信息
+  rpc UpdateUser(UpdateUserReq) returns (UpdateUserReply) {} //更新用户信息
+  rpc DeleteUser(DeleteUserReq) returns (DeleteUserReply) {} //删除用户
+  rpc AddUser(AddUserReq) returns (AddUserReply) {} //增加用户
+
+  //储存机器名和历史密码
+  rpc ListMachineName(ListMachineNameReq) returns (ListMachineNameReply) {} //获取机器名
+  rpc GetMachinePwd(GetMachinePwdReq) returns (GetMachinePwdReply) {}  //获取机器历史密码
+  rpc UpdateMachineRemark(UpdateMachineRemarkReq) returns (UpdateMachineRemarkReply) {} //修改备注
+}
+
+//登录登出
+message LoginReq {
+  string username = 1;
+  string password = 2;
+  string TotpCode = 3; //二次认证
+}
+
+message LoginReply {
+  int32 id = 1;
+  string username = 2;
+  string passStrength = 3;  //密码强度
+  string mobile = 4;
+  string email = 5;
+  string remark = 6;
+  string token = 7;
+  bool  HasMfa = 8;   //二次认证
+  string role = 9;  //用户角色
+  int32 pri = 10; //权限类别
+  bool needChangePwd = 11; //是否需要二次修改密码
+
+}
+
+message LogoutReq {
+  string username = 1;
+}
+
+message LogoutReply {
+  string result = 1;
+}
+
+//用户信息增删改查
+message ModelPage {
+  int32 pageIdx = 1 ;// start index with 1
+  int32 pageSize = 2; // if pageSize is -1, we will return all nodes
+  int32 total = 3; // the total number of records
+}
+
+message ListUserReq {
+  int32 pageSize = 1;
+
+  int32 pageIndex = 2;
+
+  string search = 3; // 模糊匹配字段
+
+  bool isSelf = 4; // 查询个人信息True,查询子用户列表false
+}
+
+message ListUserReply {
+  ModelPage page = 1;
+  message Details{
+    int32 userId = 1;
+    string userName = 2; //用户名
+    string passwd = 3;  //密码
+    string mobile = 4;  //手机号
+    string email = 5; //邮箱
+    string remark = 6; //备注
+    string passStrength = 7; //密码强度：high/middle/low
+    bool hasMfa = 8; //是否开启二次认证
+    string updateTm = 9; //密码更新时间时间
+    int32 pri = 10; // 权限类别: 1:super 2:admin 3:guest
+    string createTM = 11; //创建时间
+    string role = 12; //用户角色: mgr|dev|ops|sec
+    string address = 13; // 所在地
+    string realName = 14; // 真实姓名
+    string department = 15; //部门
+    string post = 16; //岗位
+  }
+  repeated Details List = 2;
+  bool exhausted = 3; // if this is last page
+}
+
+message UpdateUserReq {
+  int32 userId = 1;
+  string userName = 2;
+  string passwd = 3;
+  string mobile = 4;
+  string email = 5;
+  string remark = 6;
+}
+
+message UpdateUserReply {
+  string result = 1; //返回更新成功或失败
+}
+
+message DeleteUserReq {
+  int32 userId = 1;
+}
+
+message DeleteUserReply {
+  string result = 1; //返回删除成功或失败
+}
+
+message AddUserReq {
+  string role = 1; //
+  string userName = 2;
+  string passwd = 3;
+  string mobile = 4;
+  string email = 5;
+  string remark = 6;  //备注
+  string address = 7; //所在地
+  string realName = 8;  //真实姓名
+  string department = 9; //部门
+  string post = 10; //岗位
+}
+
+message AddUserReply {
+  string result = 1;
+}
+//Get the machine message
+message ListMachineNameReq {
+  int32 pageIdx = 1 ;
+  int32 pageSize = 2;
+  string searchName = 3; // 主机名
+  string startTime = 4; // 开始时间
+  string endTime = 5;    // 结束时间
+  int32 sortTime = 6;
+}
+
+message ListMachineNameReply {
+  message Details {
+    int32 id = 1;
+    string hostName = 2;
+    string dn = 3;
+    string exTime = 4;
+    string remark = 5;
+  }
+  repeated Details list = 1;
+  ModelPage page = 2;
+}
+
+message GetMachinePwdReq {
+  int32 id = 1;
+  string hasMfa = 2; //二次认证
+}
+
+message GetMachinePwdReply {
+  string machinePwd = 1; //显示当前密码和上次密码
+  string lastPwd = 2;
+}
+
+message UpdateMachineRemarkReq {
+  int32 id = 1;
+  string remark = 2;
+}
+
+message UpdateMachineRemarkReply {
+  string result = 1;  //点击修改备注后，备注列表变为可编辑样式(后面有√，×两个图片选项
+}
+
